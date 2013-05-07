@@ -1,0 +1,58 @@
+// (c) Tero Karvinen & Kimmo Karvinen http://BotBook.com
+ 
+package fi.sulautetut.android.uiandvibra;
+ 
+import android.app.Activity; 
+import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+ 
+public class UiAndVibra extends Activity {
+    TextView statusTv;
+    TextView messagesTv;
+ 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initGUI(); 
+    }
+ 
+    @Override
+    public void onResume() { 
+        super.onResume();
+        statusTv.setText("One-line status. "); 
+        messagesTv.append(
+          "This message box \nwill have\n many lines of text... ");
+        vibrate();
+    }
+ 
+    void initGUI() 
+    {
+        // Window
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, 
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Contents 
+        LinearLayout container=new LinearLayout(this);
+        container.setOrientation(android.widget.LinearLayout.VERTICAL);
+        statusTv = new TextView(this);  
+        container.addView(statusTv);
+        messagesTv = new TextView(this);
+        container.addView(messagesTv);
+        // Show
+        setContentView(container); 
+    }
+ 
+    void vibrate() 
+    {
+        Vibrator vibra = (Vibrator) getSystemService(
+                Context.VIBRATOR_SERVICE); 
+        vibra.vibrate(200); 7
+    } 
+}
