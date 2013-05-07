@@ -1,0 +1,117 @@
+// Acceleration - print accelerometer values 
+// (c) Tero Karvinen & Kimmo Karvinen http://BotBook.com
+ 
+package fi.sulautetut.android.acceleration;
+ 
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+ 
+public class Acceleration 
+    extends Activity 
+    implements SensorEventListener 
+{
+    TextView statusTv; 
+    TextView messagesTv;
+    SensorManager sensorManager;
+    Sensor sensor;
+    float g=9.81f; // m/s**2 
+    float x, y, z; // gravity along axis, times earth gravity 
+ 
+    /*** Main - automatically called methods ***/
+ 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initGUI();
+    }
+ 
+    @Override
+    public void onResume() 
+    {
+        super.onResume(); 
+        initAccel(); 
+        msg("Running. ");
+    } 
+ 
+    @Override
+    public void onPause() {
+        super.onPause();
+        closeAccel(); 
+        msg("Paused. \n");
+    }
+ 
+    @Override
+    public void onSensorChanged(SensorEvent event) { 
+        x=event.values[1]/g;    // earth gravity along axis results 1.0
+        y=event.values[2]/g;
+        z=event.values[0]/g;
+        statusTv.setText(String.format( 
+                "x: %3.2f y: %3.2f, z: %3.2f", 
+                x, y, z));
+    }
+ 
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Must have when Activity implements SensorEventListener. 
+    }
+ 
+ 
+ 
+    /*** Accelerometer ***/
+ 
+    void initAccel()
+    {
+        msg("Accelerometer initialization... ");
+        sensorManager=(SensorManager) getSystemService(SENSOR_SERVICE); 
+        sensor=sensorManager.getDefaultSensor( 
+                Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(
+                this, 
+                sensor, 
+                sensorManager.SENSOR_DELAY_NORMAL );
+    }
+ 
+    void closeAccel()
+    {
+        msg("Accelerometer closing... ");
+        sensorManager.unregisterListener(this, sensor);
+    }
+ 
+ 
+ 
+    /*** User interface ***/
+ 
+    void initGUI()
+    {
+        // Window
+        setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, 
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Contents 
+        LinearLayout container=new LinearLayout(this);
+        container.setOrientation(android.widget.LinearLayout.VERTICAL);
+        statusTv = new TextView(this);
+        container.addView(statusTv);
+        messagesTv = new TextView(this);
+        messagesTv.setText("");
+        container.addView(messagesTv);
+        setContentView(container); 
+        msg("User interface created. ");
+    }
+ 
+    public void msg(String s)
+    {
+        if (7<=messagesTv.getLineCount()) messagesTv.setText(""); 
+        messagesTv.append(s);
+    }
+}
