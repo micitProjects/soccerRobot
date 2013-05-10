@@ -20,7 +20,7 @@ public class TBlueClient extends Activity {
     }
  
     @Override
-    public void onResume() 1
+    public void onResume() //1
     {
         super.onResume();
         tBlue=new TBlue("00:07:80:83:AB:6A"); // You must change this! 2
@@ -30,8 +30,8 @@ public class TBlueClient extends Activity {
             messagesTv.append("Error: Failed to connect. ");
         } 
         String s="";
-        while (tBlue.streaming() && (s.length()<10) ) { 3
-            s+=tBlue.read(); 4
+        while (tBlue.streaming() && (s.length()<10) ) { //3
+            s+=tBlue.read(); //4
         }
         messagesTv.append("Read from Bluetooth: \n"+s);
     }
@@ -40,7 +40,7 @@ public class TBlueClient extends Activity {
     public void onPause()
     {
         super.onPause();
-        tBlue.close(); 5
+        tBlue.close(); //5
     } 
  
     public void initGUI()
